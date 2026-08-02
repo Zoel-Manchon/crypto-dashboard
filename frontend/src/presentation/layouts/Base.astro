@@ -1,0 +1,31 @@
+---
+import "../../styles/global.css";
+const { title = "crypto·watch terminal" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark" data-pal="midnight">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script is:inline>
+      // Applied before first paint so the terminal never flashes the wrong
+      // palette. `theme` stays the stored key for backwards compatibility;
+      // `data-pal` is what the stylesheet actually switches on.
+      (function () {
+        try {
+          const t = localStorage.getItem("theme") || "dark";
+          document.documentElement.classList.remove("dark", "light");
+          document.documentElement.classList.add(t);
+          document.documentElement.dataset.pal = t === "light" ? "solar" : "midnight";
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

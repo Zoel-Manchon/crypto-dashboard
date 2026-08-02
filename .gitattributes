@@ -1,0 +1,22 @@
+# Normalize line endings on commit so a Windows checkout never shows the whole
+# tree as modified. The repository stores LF; working copies get whatever the
+# platform wants.
+* text=auto
+
+# Binaries must never be touched by EOL conversion.
+*.png binary
+*.jpg binary
+*.gif binary
+*.mp4 binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+
+# Lockfiles and generated output: collapse them in PR diffs so review stays on
+# the code. They're still versioned, just not expanded by default.
+Cargo.lock       linguist-generated=true
+frontend/package-lock.json linguist-generated=true
+
+# Astro isn't detected reliably; declare it so the language bar is honest.
+*.astro linguist-language=Astro

@@ -1,0 +1,29 @@
+route:
+  receiver: default
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 3h
+  routes:
+    # Send anything warning/critical to the chat receiver.
+    - matchers:
+        - severity =~ "critical|warning"
+      receiver: chat
+
+receivers:
+  # Fallback: alerts are always visible in the Alertmanager UI (:9093).
+  - name: default
+
+  # Real notifications. Paste a Slack incoming-webhook URL below.
+  # Discord works too: use a Discord webhook URL with "/slack" appended,
+  # e.g. https://discord.com/api/webhooks/<id>/<token>/slack
+  - name: chat
+    slack_configs:
+      - send_resolved: true
+        api_url: 'https://hooks.slack.com/services/REPLACE/WITH/YOUR_WEBHOOK'
+        channel: '#alerts'
+        title: '[{{ .Status | toUpper }}] {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})'
+        text: >-
+          {{ range .Alerts }}*{{ .Annotations.summary }}*
+          {{ .Annotations.description }}
+          {{ end }}

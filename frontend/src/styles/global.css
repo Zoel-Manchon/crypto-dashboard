@@ -1,0 +1,631 @@
+/* =============================================================================
+ * crypto·watch terminal — global styles & theme tokens.
+ *
+ * Two palettes, switched by `data-pal` on <html> (the ThemeToggle writes it):
+ *   midnight — the desk at 3am: near-black paper, acid-lime bids, magenta offers
+ *   solar    — the same terminal printed on warm stock, for daylight
+ *
+ * Signature: Archivo 800 for every number, tabular figures, hairline rules,
+ * zero radius, zero glow, and full-bleed panels that butt against each other
+ * so the screen reads as one instrument rather than a pile of cards.
+ * ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --color-accent: #4d7cff;
+  --color-accent-dim: #35569f;
+  --color-up: #b8ff3c;
+  --color-down: #ff2e6b;
+  --chart-cyan: #4d7cff;
+  --chart-lime: #b8ff3c;
+  --chart-violet: #8b93a3;
+}
+
+/* ── palettes ─────────────────────────────────────────────────────────── */
+
+:root,
+.dark,
+[data-pal="midnight"] {
+  --cw-bg: #0c0d10;
+  --cw-panel: #14161b;
+  --cw-grid: #1d2027;
+  --cw-grid2: #272c36;
+  --cw-line: #39404e;
+  --cw-dim: #8b93a3;
+  --cw-dim2: #5b6272;
+  --cw-fg: #f2f3f5;
+  --cw-up: #b8ff3c;
+  --cw-down: #ff2e6b;
+  --cw-accent: #4d7cff;
+  --cw-on-accent: #0c0d10;
+}
+
+.light,
+[data-pal="solar"] {
+  --cw-bg: #f5f0e6;
+  --cw-panel: #fffdf7;
+  --cw-grid: #e8e1d2;
+  --cw-grid2: #d4cab5;
+  --cw-line: #2a2622;
+  --cw-dim: #6f6858;
+  --cw-dim2: #a89f8c;
+  --cw-fg: #191713;
+  --cw-up: #0f7a53;
+  --cw-down: #e8452c;
+  --cw-accent: #1f4bd8;
+  --cw-on-accent: #fffdf7;
+}
+
+/* Legacy variable names, kept so every existing island reskins for free.
+ * One palette, two vocabularies — the components never had to change. */
+:root,
+.dark,
+.light,
+[data-pal] {
+  --bg: var(--cw-bg);
+  --bg-panel: var(--cw-panel);
+  --bg-row: var(--cw-panel);
+  --grid: var(--cw-grid);
+  --grid-strong: var(--cw-line);
+  --text: var(--cw-fg);
+  --text-dim: var(--cw-dim);
+  --text-faint: var(--cw-dim2);
+  --color-accent: var(--cw-accent);
+  --color-accent-dim: var(--cw-dim2);
+  --color-up: var(--cw-up);
+  --color-down: var(--cw-down);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--cw-bg);
+  color: var(--cw-fg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: var(--cw-bg);
+  /* Every figure on this screen is a price, a size or a percentage. They line
+   * up in columns, so they get lining tabular figures globally. */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+a {
+  color: var(--cw-accent);
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cw-accent);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--cw-grid); }
+::-webkit-scrollbar-thumb { background: var(--cw-dim2); }
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* The 10px uppercase caption that labels every region of the terminal. */
+.label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cw-dim);
+}
+
+/* ── chrome ───────────────────────────────────────────────────────────── */
+
+.cw-shell {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ticker tape. Two copies of the list translated -50% so the loop is seamless. */
+.cw-tape {
+  overflow: hidden;
+  background: var(--cw-panel);
+  border-bottom: 2px solid var(--cw-line);
+}
+
+.cw-tape__run {
+  display: flex;
+  width: max-content;
+  animation: tape 48s linear infinite;
+}
+
+.cw-tape__item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 18px;
+  border-right: 1px solid var(--cw-grid);
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--cw-dim);
+}
+
+.cw-tape__sym {
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--cw-fg);
+}
+
+@keyframes tape {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.cw-header {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  border-bottom: 2px solid var(--cw-line);
+}
+
+.cw-brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 16px;
+}
+
+.cw-brand__mark {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.cw-brand__kicker {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cw-dim);
+  border-left: 1px solid var(--cw-line);
+  padding-left: 18px;
+}
+
+.cw-live {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.cw-live__dot {
+  width: 8px;
+  height: 8px;
+  background: currentColor;
+}
+
+.cw-clock {
+  padding: 10px 16px;
+  border-left: 1px solid var(--cw-line);
+  min-width: 96px;
+}
+
+.cw-clock__city {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cw-dim);
+}
+
+.cw-clock__time {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.cw-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--cw-line);
+}
+
+.cw-tab {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 11px 26px;
+  border: 0;
+  border-right: 1px solid var(--cw-line);
+  cursor: pointer;
+  background: transparent;
+  color: var(--cw-dim);
+}
+
+.cw-tab:hover {
+  color: var(--cw-fg);
+}
+
+.cw-tab[aria-selected="true"] {
+  background: var(--cw-accent);
+  color: var(--cw-on-accent);
+}
+
+.cw-footer {
+  margin-top: auto;
+  border-top: 2px solid var(--cw-line);
+  padding: 12px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cw-dim);
+}
+
+/* ── panels ───────────────────────────────────────────────────────────── */
+
+/* Panels butt together with shared hairlines instead of floating with gaps —
+ * that edge-to-edge grid is what makes it read as a terminal, not a dashboard. */
+.cw-split {
+  display: grid;
+  border-bottom: 2px solid var(--cw-line);
+}
+
+.cw-split > * + * {
+  border-left: 2px solid var(--cw-line);
+}
+
+.cw-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--cw-line);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.cw-body {
+  padding: 12px 16px;
+}
+
+/* A small square button used for inline options (period, size-by, direction). */
+.cw-chip {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border: 1px solid var(--cw-line);
+  cursor: pointer;
+  background: transparent;
+  color: var(--cw-dim);
+}
+
+.cw-chip[aria-pressed="true"] {
+  background: var(--cw-accent);
+  color: var(--cw-on-accent);
+  border-color: var(--cw-accent);
+}
+
+/* KPI cell — the number is the loudest type in the region. */
+.cw-kpi {
+  padding: 14px 18px;
+  border-right: 1px solid var(--cw-line);
+  min-width: 0;
+}
+
+.cw-kpi__value {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* ── forms ────────────────────────────────────────────────────────────── */
+
+.cw-field > label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cw-dim);
+  margin-bottom: 4px;
+}
+
+.cw-input {
+  width: 100%;
+  min-height: 34px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--cw-fg);
+  background: var(--cw-panel);
+  border: 1px solid var(--cw-line);
+  border-radius: 0;
+}
+
+.cw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border: 1px solid var(--cw-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--cw-fg);
+}
+
+.cw-btn:hover { background: var(--cw-grid); }
+.cw-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.cw-btn--primary {
+  background: var(--cw-accent);
+  border-color: var(--cw-accent);
+  color: var(--cw-on-accent);
+}
+
+.cw-btn--primary:hover {
+  background: var(--cw-up);
+  border-color: var(--cw-up);
+  color: var(--cw-on-accent);
+}
+
+.cw-btn--ghost {
+  border-color: transparent;
+  color: var(--cw-accent);
+  padding: 0 2px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.cw-btn--ghost:hover { background: transparent; text-decoration: underline; }
+
+/* ── tables ───────────────────────────────────────────────────────────── */
+
+.cw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.cw-table th {
+  text-align: left;
+  padding: 7px 8px;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cw-dim);
+  border-bottom: 1px solid var(--cw-line);
+}
+
+.cw-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--cw-grid);
+}
+
+.cw-table th:first-child, .cw-table td:first-child { padding-left: 16px; }
+.cw-table th:last-child, .cw-table td:last-child { padding-right: 16px; }
+
+/* ── motion ───────────────────────────────────────────────────────────── */
+
+@keyframes blip {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.2; }
+}
+
+.blip { animation: blip 1.6s ease-in-out infinite; }
+
+@keyframes blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0.15; }
+}
+
+.blink { animation: blink 1.4s steps(1) infinite; }
+
+.shimmer {
+  display: inline-block;
+  background: linear-gradient(90deg, var(--cw-grid) 0%, var(--cw-grid2) 50%, var(--cw-grid) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cw-tape__run, .blip, .blink, .shimmer { animation: none; }
+}
+
+/* ── legacy island styles, retuned to the terminal ────────────────────── */
+
+/* Page shell for the standalone pages (/login, /coin). The terminal itself is
+ * full-bleed and manages its own layout, but these two are single-column
+ * documents and need a measure — without this they render edge to edge. */
+.terminal-shell {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-main {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.dashboard-section {
+  width: 100%;
+  scroll-margin-top: 24px;
+}
+
+/* Wrapper around the spot-price grid. Flush with its panel — the grid inside
+ * already draws its own hairlines, so this only owns the vertical rhythm. */
+.price-panel {
+  width: 100%;
+  min-width: 0;
+  background: var(--cw-bg);
+}
+
+.price-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--cw-line);
+  border-block: 1px solid var(--cw-line);
+}
+
+.price-card {
+  min-width: 0;
+  padding: 14px 16px;
+  background: var(--cw-panel);
+}
+
+.price-card__head {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.price-card__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price-card__ticker {
+  flex: 0 0 auto;
+  color: var(--cw-accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.price-card__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price-line {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.price-line__currency {
+  color: var(--cw-dim2);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.price-line__value {
+  min-width: 0;
+  overflow: hidden;
+  text-align: right;
+  color: var(--cw-fg);
+  font-size: clamp(1.05rem, 1.5vw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  transition: color 300ms ease;
+}
+
+.price-line__change {
+  min-width: 64px;
+  text-align: right;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.price-status {
+  padding: 0 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-error {
+  padding: 14px 16px;
+  border: 1px solid var(--cw-down);
+  color: var(--cw-down);
+  background: var(--cw-panel);
+  font-size: 12px;
+}
+
+.price-error span {
+  display: block;
+  margin-top: 4px;
+  color: var(--cw-dim);
+}
+
+.price-skeleton-card {
+  min-height: 136px;
+  padding: 14px 16px;
+  background: var(--cw-panel);
+}
+
+@media (max-width: 1200px) {
+  .price-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 860px) {
+  .cw-split { grid-template-columns: 1fr !important; }
+  .cw-split > * + * { border-left: 0; border-top: 2px solid var(--cw-line); }
+  .price-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cw-tab { padding: 10px 16px; letter-spacing: 0.12em; }
+}
+
+@media (max-width: 560px) {
+  .price-grid { grid-template-columns: 1fr; }
+}

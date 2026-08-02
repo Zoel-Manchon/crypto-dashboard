@@ -1,0 +1,10 @@
+# The frontend image builds with ./frontend as its context, so the repo-root
+# .dockerignore does NOT apply here — this file is what keeps the host's
+# node_modules out of the build. Without it, `COPY . .` drops host-built,
+# platform-specific binaries (rolldown, lightningcss) on top of the ones npm
+# just installed inside the image, and the build breaks on any non-matching host.
+node_modules
+dist
+.astro
+.env
+.DS_Store

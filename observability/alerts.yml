@@ -1,0 +1,47 @@
+groups:
+  - name: crypto-backend
+    rules:
+      - alert: BackendDown
+        expr: up{job="crypto-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend is down"
+          description: "Prometheus cannot scrape the backend /metrics endpoint."
+
+      - alert: NoSuccessfulPolls
+        expr: increase(cw_polls_total{result="ok"}[10m]) == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No successful poll cycles in 10m"
+          description: "The price polling loop has not completed successfully recently."
+
+      - alert: PollErrors
+        expr: rate(cw_polls_total{result="error"}[10m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Poll cycles are failing"
+          description: "The provider poll is returning errors."
+
+      - alert: RegistryEmpty
+        expr: cw_tracked_coins == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Coin registry is empty"
+          description: "Discovery has not populated the tracked-coin set."
+
+      - alert: DiscoveryErrors
+        expr: increase(cw_discovery_total{result="error"}[30m]) > 0
+        for: 1m
+        labels:
+          severity: info
+        annotations:
+          summary: "Coin discovery refresh failed"
+          description: "A top-N market-cap discovery refresh failed in the last 30m."

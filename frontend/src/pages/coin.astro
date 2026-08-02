@@ -1,0 +1,23 @@
+---
+import Base from "../presentation/layouts/Base.astro";
+import CoinDetail from "../presentation/components/CoinDetail.tsx";
+---
+
+<Base title="coin · crypto·watch">
+  <script is:inline>
+    // UX gate only — market data is public; /api/prefs is the protected part.
+    try {
+      if (!localStorage.getItem("cw.token") && !localStorage.getItem("cw.guest")) {
+        location.replace("/login");
+      }
+    } catch (_) {}
+  </script>
+
+  <div class="terminal-shell">
+    <main class="terminal-main">
+      <section class="dashboard-section">
+        <CoinDetail client:only="react" />
+      </section>
+    </main>
+  </div>
+</Base>

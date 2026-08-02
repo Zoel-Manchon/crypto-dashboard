@@ -1,0 +1,12 @@
+---
+import Base from "../presentation/layouts/Base.astro";
+import LoginGate from "../presentation/components/LoginGate.tsx";
+---
+
+<Base title="access · crypto·watch">
+  <div class="terminal-shell">
+    <main class="terminal-main">
+      <LoginGate client:only="react" />
+    </main>
+  </div>
+</Base>

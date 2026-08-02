@@ -1,0 +1,103 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: crypto_dashboard
+      POSTGRES_USER: crypto
+      POSTGRES_PASSWORD: crypto
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crypto -d crypto_dashboard"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://crypto:crypto@postgres:5432/crypto_dashboard
+      # The dev postgres has no TLS; `prefer` uses TLS when offered and falls
+      # back to plaintext otherwise. Use `verify-full` (+ DB_CA_CERT_PATH) in prod.
+      DB_SSL_MODE: prefer
+      DB_MAX_CONNECTIONS: 5
+      POLL_INTERVAL_SECONDS: 60
+      TRACKED_COINS_LIMIT: 25
+      COIN_REFRESH_SECONDS: 3600
+      # Security: scope CORS to the frontend origin; rate-limit per IP (0 = off).
+      # Note: behind Docker's proxy, host traffic shares one source IP.
+      CORS_ALLOWED_ORIGIN: http://localhost:4321
+      RATE_LIMIT_PER_MIN: 600
+      # Session signing secret. Taken from the environment (.env) so no real
+      # secret ever lands in a committed file; the fallback is a dev-only value
+      # and the service refuses to be useful with it in production.
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "4321:4321"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # --- Observability: scrape /metrics, alert, and visualize ---
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/alerts.yml:/etc/prometheus/alerts.yml:ro
+    depends_on:
+      - backend
+      - alertmanager
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./observability/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      # The console embeds the provisioned dashboard in its Ops tab. Grafana
+      # sends X-Frame-Options: deny unless embedding is allowed explicitly.
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_SECURITY_COOKIE_SAMESITE: lax
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data:
+  grafana_data:

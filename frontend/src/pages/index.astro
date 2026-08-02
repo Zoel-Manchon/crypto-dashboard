@@ -1,0 +1,17 @@
+---
+import Base from "../presentation/layouts/Base.astro";
+import Terminal from "../presentation/components/terminal/Terminal.tsx";
+---
+
+<Base title="crypto·watch terminal">
+  <script is:inline>
+    // UX gate only — market data is public; /api/prefs is the protected part.
+    try {
+      if (!localStorage.getItem("cw.token") && !localStorage.getItem("cw.guest")) {
+        location.replace("/login");
+      }
+    } catch (_) {}
+  </script>
+
+  <Terminal client:only="react" />
+</Base>
