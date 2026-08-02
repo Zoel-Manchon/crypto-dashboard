@@ -8,10 +8,12 @@ A real-time cryptocurrency market terminal. Prices tick on every exchange trade,
 > **🚧 Work in progress.** The core feature set is complete and functional. Tracked coins are **discovered at runtime** — the top *N* by market cap (default 25), refreshed periodically from CoinGecko.
 
 
-[![Crypto·Watch terminal — watch the demo](docs/screenshots/poster.png)](docs/screenshots/demo.mp4)
+
+
+https://github.com/user-attachments/assets/ea7354d5-4b99-441a-8539-334415d53749
 
 <sub><b>▶ Click to play</b> — Markets → Charts → Risk → Ops. The tape runs, the headline price flashes on every trade, and candles build in 5-second buckets from the live stream.</sub>
-
+<sub>Markets → Charts → Risk → Ops. The tape runs, the headline price flashes on every trade, and candles build in 5-second buckets from the live stream.</sub>
 ---
 
 ## What it does
