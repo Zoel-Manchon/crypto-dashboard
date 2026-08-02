@@ -7,28 +7,6 @@ A real-time cryptocurrency market terminal. Prices tick on every exchange trade,
 
 > **🚧 Work in progress.** The core feature set is complete and functional. Tracked coins are **discovered at runtime** — the top *N* by market cap (default 25), refreshed periodically from CoinGecko.
 
-## Demo
-
-<!-- ─────────────────────────────────────────────────────────────────────────
-     RECORD THE DEMO, THEN DO ONE OF THESE TWO THINGS. Nothing else to edit.
-
-     A) File in the repo (what this README is set up for):
-        Save the recording as  docs/screenshots/demo.mp4
-        and its first frame as docs/screenshots/poster.png
-        The thumbnail below then works with no changes.
-        See docs/screenshots/README.md for the shot list and the ffmpeg commands.
-
-     B) Inline player (keeps the binary out of the repo entirely):
-        Drag the .mp4 into a new issue comment on this repo, copy the
-        user-attachments URL GitHub gives back, and paste it alone on the
-        blank line below — no markdown, no brackets. Then delete the
-        thumbnail block underneath.
-
-     GitHub cannot play a repo-relative .mp4 inline; that limitation is why
-     option A uses a poster image instead of a player.
-     ───────────────────────────────────────────────────────────────────── -->
-
-
 
 [![Crypto·Watch terminal — watch the demo](docs/screenshots/poster.png)](docs/screenshots/demo.mp4)
 
