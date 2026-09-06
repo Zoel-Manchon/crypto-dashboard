@@ -1,26 +1,45 @@
 # Crypto·Watch Terminal
 
 [![CI](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/ci.yml)
+[![Security](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/security.yml)
 ![Rust](https://img.shields.io/badge/Rust-CE422B?style=flat-square&logo=rust&logoColor=white)
 ![Axum](https://img.shields.io/badge/Axum-000000?style=flat-square)
 ![Astro](https://img.shields.io/badge/Astro-BC52EE?style=flat-square&logo=astro&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white)
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white)
+![license MIT](https://img.shields.io/badge/license-MIT-2A3340?style=flat-square)
 
-[![CI](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/ci.yml)
-[![Security](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/security.yml/badge.svg)](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/security.yml)
+**A market terminal, not a dashboard: prices tick on every exchange trade, candles
+build live in the browser, and the monitoring stack is a tab inside the product
+rather than five links you open somewhere else.**
 
-A real-time cryptocurrency market terminal. Prices tick on every exchange trade, candles are aggregated live in the browser, and the monitoring stack is a tab inside the product rather than five links you open somewhere else — on a clean-architecture Rust backend and an Astro + React frontend.
-
-> **🚧 Work in progress.** The core feature set is complete and functional. Tracked coins are **discovered at runtime** — the top *N* by market cap (default 25), refreshed periodically from CoinGecko.
-
-
-
+> **Work in progress.** The core feature set is complete and functional. Tracked
+> coins are **discovered at runtime** — the top *N* by market cap (default 25),
+> refreshed periodically from CoinGecko.
 
 https://github.com/user-attachments/assets/ea7354d5-4b99-441a-8539-334415d53749
 
 <sub>Markets → Charts → Risk → Ops. The tape runs, the headline price flashes on every trade, and candles build in 5-second buckets from the live stream.</sub>
+
+---
+
+## At a glance
+
+|  |  |
+| --- | --- |
+| **What it is** | Five tabs, each one a desk you would actually sit at: markets, charts, risk, the trading desk and ops. |
+| **The one idea** | Observability lives **inside** the product. The Ops tab is the monitoring stack, not a link to Grafana in another window — because a metric nobody opens is a metric nobody reads. |
+| **Live data** | Sub-second price streaming with candle aggregation in the browser, in 5-second buckets. |
+| **Built with** | Rust · Axum · clean architecture · PostgreSQL · Astro + React · Prometheus · Grafana |
+| **Hardened** | Argon2id password hashing, JWT auth, `verify-full` TLS in production, and a deployment guide with a hardening checklist |
+| **Run it** | `docker compose up -d` — see [Getting started](#getting-started) |
+
+**Contents** — [What it does](#what-it-does) · [Tech stack](#tech-stack) ·
+[Architecture](#architecture) · [API endpoints](#api-endpoints) ·
+[Getting started](#getting-started) · [Configuration](#configuration) ·
+[Observability](#observability) · [Security](#security) · [Status](#status)
+
 ---
 
 ## What it does
@@ -342,7 +361,9 @@ Supply-chain and code scanning run on every push and weekly: `cargo audit` (Rust
 
 Details and reporting: [SECURITY.md](SECURITY.md) · production setup: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-## Roadmap
+## Status
+
+Everything below is shipped except the last item.
 
 - [x] **More cryptocurrencies** — dynamic top-N by market cap (default 25)
 - [x] 24h volume and market-cap indicators — market heatmap + per-coin stats
@@ -354,6 +375,16 @@ Details and reporting: [SECURITY.md](SECURITY.md) · production setup: [docs/DEP
 - [x] Observability surfaced inside the product (Ops tab)
 - [x] Configurable market clocks — up to 8 from a 14-city catalog, in the Desk tab (the header carries four fixed venues as chrome)
 - [ ] Exchange WebSocket ingestion in the Rust backend, so real-time doesn't depend on the browser reaching Binance
+
+That last one is the meaningful gap. Today the browser holds the exchange connection,
+so the live tape depends on every viewer being able to reach Binance directly — and
+each viewer opens their own socket. Moving ingestion into the backend makes one
+connection serve everyone, and makes the stream survive a client that cannot reach the
+exchange at all.
+
+Also verified in this repo: `cargo audit` and `npm audit --omit=dev --audit-level=high`
+both report clean, and the Security workflow runs Trivy for vulnerabilities and secrets
+on every push.
 
 ## License
 
