@@ -1,5 +1,13 @@
 # Crypto·Watch Terminal
 
+[![CI](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/ci.yml)
+![Rust](https://img.shields.io/badge/Rust-CE422B?style=flat-square&logo=rust&logoColor=white)
+![Axum](https://img.shields.io/badge/Axum-000000?style=flat-square)
+![Astro](https://img.shields.io/badge/Astro-BC52EE?style=flat-square&logo=astro&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white)
+
 [![CI](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/ci.yml)
 [![Security](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/security.yml/badge.svg)](https://github.com/Zoel-Manchon/crypto-dashboard/actions/workflows/security.yml)
 
@@ -12,7 +20,6 @@ A real-time cryptocurrency market terminal. Prices tick on every exchange trade,
 
 https://github.com/user-attachments/assets/ea7354d5-4b99-441a-8539-334415d53749
 
-<sub><b>▶ Click to play</b> — Markets → Charts → Risk → Ops. The tape runs, the headline price flashes on every trade, and candles build in 5-second buckets from the live stream.</sub>
 <sub>Markets → Charts → Risk → Ops. The tape runs, the headline price flashes on every trade, and candles build in 5-second buckets from the live stream.</sub>
 ---
 
