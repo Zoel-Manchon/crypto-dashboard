@@ -20,7 +20,7 @@
     "@types/react-dom": "^19.2.3",
     "astro": "^7.0.6",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6",
+    "react-dom": "^19.2.8",
     "recharts": "^3.8.1",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
